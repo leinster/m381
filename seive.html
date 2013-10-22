@@ -5,11 +5,21 @@
     <title>Sieve of Eratosthenes</title>
     <style>
      body { font-family: Helvetica,Verdana; }
+     #operation {
+       position: relative;
+       margin-bottom: 20px;
+     }
+     #operation button {
+       position: relative;
+       top: -2px;
+       margin: 0 0 0 10px;
+     }
      #n { width: 70px; }
      .integer {
        display: inline-block;
-       width: 40px;
-       margin: 0 10px 10px 0;
+       font-size: 11px;
+       width: 25px;
+       margin: 0 4px 4px 0;
        text-align: right;
        cursor: default;
      }
@@ -38,21 +48,10 @@
           <a href="//en.wikipedia.org/wiki/Sieve_of_Eratosthenes">sieve of
             Eratosthenes</a>.
 
-          Find prime numbers up to n =
+          Find prime numbers up to <i>n</i> =
           <input type="number" name="n" id="n" min="2" value="100" placeholder="100">.
         </p>
-        <p>
-          <label>
-            Animation speed
-            <input type="range" id="speed" min="0" value="100" max="200">
-          </label>
-          <button id="restart">Restart</button>
-        </p>
       </form>
-
-      <div id="key">
-        A prime is indicated by a yellow background, e.g. <div class='integer prime'>7</div>.
-      </div>
     </section>
     <section id="seive"></section>
 
