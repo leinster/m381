@@ -5,22 +5,24 @@
     <title>Sieve of Eratosthenes</title>
     <style>
      body { font-family: Helvetica,Verdana; }
-     #js-seive .integer {
+     #n { width: 70px; }
+     .integer {
        display: inline-block;
        width: 40px;
        margin: 0 10px 10px 0;
        text-align: right;
+       cursor: default;
      }
-     #js-seive .integer.prime {
+     .integer.prime {
        background-color: #ff9;
      }
-     #js-seive .integer.mustBePrime {
-       background-color: #f9f;
+     .integer.composite {
+       cursor: help;
      }
-     #js-seive .integer.composite {
-       background-color: #cff;
+     #key .integer {
+       margin: 0 5px 0 5px;
      }
-     #js-seive .result {
+     #seive .result {
        margin-top: 10px;
        font-size: 110%;
      }
@@ -30,11 +32,29 @@
     <section>
       <h1>Sieve of Eratosthenes</h1>
 
-      <form id="js-set-n">
-        Find prime numbers up to n = <input type="number" name="n" id="js-n" min="2">
+      <form id="set-n">
+        <p>
+          An implementation of the
+          <a href="//en.wikipedia.org/wiki/Sieve_of_Eratosthenes">sieve of
+            Eratosthenes</a>.
+
+          Find prime numbers up to n =
+          <input type="number" name="n" id="n" min="2" value="100" placeholder="100">.
+        </p>
+        <p>
+          <label>
+            Animation speed
+            <input type="range" id="speed" min="0" value="100" max="200">
+          </label>
+          <button id="restart">Restart</button>
+        </p>
       </form>
+
+      <div id="key">
+        A prime is indicated by a yellow background, e.g. <div class='integer prime'>7</div>.
+      </div>
     </section>
-    <section id="js-seive"></section>
+    <section id="seive"></section>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="seive.js"></script>
