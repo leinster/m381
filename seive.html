@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Sieve of Eratosthenes</title>
+    <link href="style.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1>Sieve of Eratosthenes</h1>
+    <nav><a href="./">back</a></nav>
+    <section id="seive-form">
+      <form id="set-n">
+        <p>
+          An implementation of the
+          <a href="//en.wikipedia.org/wiki/Sieve_of_Eratosthenes">sieve of
+            Eratosthenes</a>.
+
+          Find prime numbers up to <i>n</i> =
+          <input type="number" name="n" id="n" min="2" value="100" placeholder="100">.
+        </p>
+      </form>
+    </section>
+    <section id="seive"></section>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="seive.js"></script>
+  </body>
+</html>
