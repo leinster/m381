@@ -1,0 +1,135 @@
+#!/usr/bin/env node
+
+// An implementation of an Unlimited Register Machine
+
+var fs = require("fs");
+var path = require("path");
+var parse = require("./parser").parse;
+
+var debug = !!process.env["DEBUG"];
+
+var usage = function() {
+  var script = path.basename(process.argv[1]);
+  console.warn("usage: " + script + " program_file n1 n2 ...");
+  console.warn("       program_file is a URM program, see examples.");
+  console.warn("       n1, n2, ... ∈ ℕ");
+  process.exit(1);
+};
+
+var inN = function(n) {
+  r = Math.floor(n);
+  var result = (r == n && r >= 0);
+  if (! result) {
+    console.warn(n + " ∉ ℕ");
+  }
+  return result;
+};
+
+var programFile = process.argv[2];
+if (! fs.existsSync(programFile)) {
+  console.warn("program_file not found!");
+  usage();
+}
+program = parse(fs.readFileSync(programFile, { encoding: "UTF-8" }));
+
+var args = process.argv.slice(3);
+if (args.length < 1) {
+  console.log("No inputs supplied!");
+  usage();
+}
+if (! args.every(function(n) { return inN(n); })) {
+  usage();
+}
+args = args.map(function(n) { return Math.floor(n); });
+
+var clone = function(array) {
+  var i = 0, copy = [];
+  for (i; i < array.length; i++) {
+    copy[i] = array[i];
+  }
+  return copy;
+};
+
+var initialiseRegisters = function(program, args) {
+  var i = 0, max = 0, registers = [];
+  program.forEach(function(instruction) {
+    var operation = instruction[0];
+    if (operation === 'J' || operation === 'C') {
+      max = Math.max(max, instruction[1], instruction[2]);
+    } else {
+      max = Math.max(max, instruction[1]);
+    }
+  });
+  for (i; i < max; i++) {
+    registers[i] = args[i] || 0;
+  }
+  return registers;
+};
+
+var run = function(instruction, registers, position) {
+  var f = function(i) {
+    return i - 1;               // fix index
+  };
+  var operation = instruction[0];
+  if (operation === "Z") {
+    registers[f(instruction[1])] = 0;
+  }
+  if (operation === "S") {
+    registers[f(instruction[1])] += 1;
+  }
+  if (operation === "C") {
+    registers[f(instruction[2])] = registers[f(instruction[1])];
+  }
+  if (operation === "J" &&
+      registers[f(instruction[1])] === registers[f(instruction[2])]) {
+    return f(instruction[3]);
+  }
+  return position + 1;
+};
+
+var URM = function(program /* args */) {
+  var args = Array.prototype.slice.call(arguments, 1);
+  var registers = initialiseRegisters(program, args);
+  var position = 0;
+  var instruction;
+  var trace = [];
+  while (position < program.length) {
+    instruction = program[position];
+    if (debug) {
+      console.log([position + 1], clone(registers));
+    }
+    trace.push([position + 1, clone(registers)]);
+    position = run(instruction, registers, position);
+  }
+  trace.push(["STOP", clone(registers)]);
+  return { output: registers[0], trace: trace };
+};
+
+var printProgramRun = function(program, args) {
+  console.log("URM program:");
+  program.forEach(function(instruction, i) {
+    console.log((i + 1) + "\t" +
+                instruction[0] + "(" + instruction.slice(1).join(", ") + ")");
+  });
+  console.log();
+  console.log("Run with input " + args.length + "-tuple (" + args.join(", ") + ")");
+  console.log();
+  var result = URM.apply(null, [program].concat(args));
+  var registerIndices = [];
+  var i = 1;
+  for (i; i <= result.trace[0][1].length; i++) {
+    registerIndices.push("R_" + i);
+  }
+  console.log("i\tInstruction\t" + registerIndices.join("\t"));
+  result.trace.forEach(function(operation, i) {
+    console.log((i + 1) + "\t" + operation[0] + "\t\t" + operation[1].join("\t"));
+  });
+  console.log();
+  console.log("Output is " + result.output);
+};
+
+printProgramRun(program, args);
+
+// addition: ℕ^2 → ℕ
+// multiplication: ℕ^2 → ℕ
+// min: ℕ^2 → ℕ

@@ -1,0 +1,63 @@
+#!/usr/bin/env node --harmony
+"use strict";
+
+const
+  fs = require('fs'),
+  path = require('path'),
+  parse = require('./parser').parse,
+  functions = process.argv.slice(2),
+  usage = function() {
+    var script = path.basename(process.argv[1]);
+    console.warn("usage: " + script + " fn_2 fn_1 ... fn_k");
+    console.warn("       fn_1, fn_2, ..., fn_k are the names of the URM programs to be composed.");
+    console.warn("       fn_3 fn_1 corresponds to the function composition (fn_3 ∘ fn_1)");
+    process.exit(1);
+  };
+
+var rho = function(program) {
+  var registers = program.reduce(function(acc, instruction) {
+    if (instruction.length === 2) {
+      acc.push(instruction[1]);
+    } else {
+      acc.push(instruction[1]);
+      acc.push(instruction[2]);
+    }
+    return acc;
+  }, []);
+  return Math.max.apply(null, registers);
+};
+
+if (functions.length === 0) { usage(); }
+
+var programs = [];
+functions.reverse();
+functions.forEach(function(program) {
+  programs.push(parse(fs.readFileSync(program, { encoding: "UTF-8" })));
+});
+//console.log(programs);
+// work in pairs until there is only one remaining
+// while (programs.length >= 2)
+var P = programs.pop(), Q = programs.pop();
+var s = Q.length, r = P.length;
+var zeroed = 2;
+if (rho(Q) > 1) {
+  while (zeroed <= rho(Q)) {
+    Q.push(['Z', zeroed]);
+    zeroed += 1;
+  }
+}
+P.forEach(function(instruction) {
+  if (instruction[0] === 'J') {
+    instruction[3] = instruction[3] + (s + rho(Q) - 1);
+  }
+});
+Q.forEach(function(instruction) {
+  if (instruction[0] === 'J' && instruction[3] > s) {
+    instruction[3] = s + 1;
+  }
+});
+var program = Q.concat(P);
+program.forEach(function(instruction, index) {
+  var ins = instruction.shift();
+  console.log((index + 1) + " " + ins + '(' + instruction.join(', ') + ')');
+});

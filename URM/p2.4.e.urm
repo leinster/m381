@@ -1,0 +1,14 @@
+J(1, 2, 14)	finish if n = m.
+J(1, 3, 6)
+J(2, 3, 10)
+S(3)
+J(1, 1, 2)	we loop until either n = r_3 or m = r_3, i.e. until we find lower value
+J(2, 3, 14)	if r_3 = r_2 we have finished
+S(3)
+S(4)
+J(1, 1, 6)
+J(1, 3, 14)	if r_3 = r_1 we have finished
+S(3)
+S(4)
+J(1, 1, 10)
+C(4, 1)

@@ -1,0 +1,12 @@
+n -> 2, if n = 2
+n -> 1, otherwise
+
+1 S(2)
+2 S(2)
+3 J(1, 2, 6)
+4 Z(1)
+5 S(1)
+
+By the input convention, R_2 has initial value 0, so we set it to 2.
+Then if r_1 = r_2 we stop, since r_1 = 2, as required.
+Otherwise, we set r_1 to 1 and stop.
